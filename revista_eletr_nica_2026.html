@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciência e Felicidade - Revista Eletrônica | 3ª Edição 2026 | UniCesumar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display (Serif) & Outfit (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FCD34D', // Amarelo girassol vibrante
+                            darkyellow: '#D97706', // Tom de mel escuro
+                            lightyellow: '#FEF08A', // Amarelo suave para destaques
+                            dark: '#1C1917',   // Tom carvão aquecido
+                            accent: '#78350F', // Castanho terra (miolo do girassol)
+                            cardBg: '#FFFDF5'  // Off-white aquecido e aconchegante
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Outfit"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .parallax-sunflower {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&q=80&w=1600');
+            background-attachment: fixed;
+            background-position: center;
+            background-size: cover;
+        }
+        .animate-spin-slow {
+            animation: spin 20s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .glass-header {
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="font-sans bg-stone-50/50 text-brand-dark overflow-x-hidden">
+
+    <!-- Reading Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-yellow-100 z-50">
+        <div id="readProgress" class="h-full bg-brand-darkyellow transition-all duration-150" style="width: 0%"></div>
+    </div>
+
+    <div id="customNotification" class="fixed top-6 right-6 z-50 max-w-md w-full sm:w-96 transform translate-y-[-100px] opacity-0 transition-all duration-500 pointer-events-none">
+        <div class="bg-brand-dark text-white p-4 rounded-2xl shadow-2xl border border-brand-yellow/30 flex items-start gap-3">
+            <div id="notificationIcon" class="text-xl text-brand-yellow mt-0.5"></div>
+            <div class="flex-1">
+                <h5 id="notificationTitle" class="font-bold text-sm text-brand-lightyellow">Notificação</h5>
+                <p id="notificationMessage" class="text-xs text-stone-200 mt-1 leading-relaxed">Mensagem de aviso.</p>
+            </div>
+            <button onclick="hideNotification()" class="text-stone-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <header class="sticky top-0 bg-white/95 glass-header shadow-sm z-50 transition-all border-b border-yellow-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <button onclick="toggleSidebar()" class="lg:hidden text-brand-dark p-2 hover:bg-amber-100 rounded-full transition" aria-label="Abrir menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <span class="font-serif text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-wide text-brand-dark flex items-center gap-1.5 sm:gap-2 select-none">
+                    <i class="fa-solid fa-sun text-brand-darkyellow animate-spin-slow"></i>
+                    CIÊNCIA DA FELICIDADE
+                </span>
+            </div>
+            
+            <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 font-medium">
+                <a href="#inicio" class="hover:text-brand-darkyellow transition py-1 border-b-2 border-transparent hover:border-brand-darkyellow">Início</a>
+                <a href="#introducao" class="hover:text-brand-darkyellow transition py-1 border-b-2 border-transparent hover:border-brand-darkyellow">3ª Edição 2026</a>
+                <a href="#artigos" class="hover:text-brand-darkyellow transition py-1 border-b-2 border-transparent hover:border-brand-darkyellow">Artigo Unificado</a>
+                
+                <div class="relative group" id="maisDropdown">
+                    <button onclick="toggleMaisDropdown(event)" class="flex items-center gap-1 bg-amber-100/70 hover:bg-amber-200/80 text-brand-accent px-4 py-2 rounded-full transition focus:outline-none">
+                        Mais <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" id="maisChevron"></i>
+                    </button>
+                    <div id="maisMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-amber-100 opacity-0 scale-95 pointer-events-none transition-all duration-200 z-50 overflow-hidden group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto">
+                        <div class="py-2">
+                            <button onclick="selectDicasTab('livro')" class="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-gray-800 transition">
+                                <i class="fa-solid fa-book-open text-brand-darkyellow"></i> Livros em Português
+                            </button>
+                            <button onclick="selectDicasTab('filme')" class="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-gray-800 transition">
+                                <i class="fa-solid fa-film text-brand-darkyellow"></i> Filmes & Documentários
+                            </button>
+                            <button onclick="selectDicasTab('video')" class="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-gray-800 transition">
+                                <i class="fa-solid fa-circle-play text-brand-darkyellow"></i> Vídeos do YouTube
+                            </button>
+                            <button onclick="selectDicasTab('pratica')" class="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-gray-800 transition">
+                                <i class="fa-solid fa-lightbulb text-brand-darkyellow"></i> Dicas Práticas
+                            </button>
+                            <a href="#termometro" class="flex items-center gap-3 px-4 py-3 hover:bg-amber-50 text-gray-800 transition">
+                                <i class="fa-solid fa-heart-pulse text-brand-darkyellow"></i> Termômetro de Bem-Estar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="flex items-center gap-4 shrink-0">
+                <button onclick="toggleSearch()" class="p-2 text-gray-600 hover:text-brand-darkyellow rounded-full transition" aria-label="Buscar na revista">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div id="searchBar" class="hidden bg-amber-50 border-b border-amber-200 py-4 px-6 animate-fadeIn transition-all">
+        <div class="max-w-3xl mx-auto flex gap-3">
+            <input type="text" id="searchInput" placeholder="Buscar no artigo, livros, vídeos ou dicas..." class="w-full bg-white border border-amber-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-darkyellow focus:outline-none">
+            <button onclick="performSearch()" class="bg-brand-dark text-white px-6 py-2 rounded-xl hover:bg-black transition">Buscar</button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <div id="mobileSidebar" class="fixed inset-0 bg-black/50 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div id="mobileSidebarContent" class="fixed top-0 left-0 bottom-0 w-80 bg-white max-w-[85vw] p-6 shadow-2xl transition-transform duration-300 -translate-x-full flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-8">
+                    <span class="font-serif text-lg font-bold text-brand-dark">3ª Edição 2026</span>
+                    <button onclick="toggleSidebar()" class="text-gray-500 hover:text-brand-dark p-1">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+                <nav class="flex flex-col gap-5 text-lg font-medium text-gray-800">
+                    <a href="#inicio" onclick="toggleSidebar()" class="hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-house text-brand-darkyellow w-6"></i>Início</a>
+                    <a href="#introducao" onclick="toggleSidebar()" class="hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-circle-question text-brand-darkyellow w-6"></i>A 3ª Edição</a>
+                    <a href="#artigos" onclick="toggleSidebar()" class="hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-book-open text-brand-darkyellow w-6"></i>Artigo Unificado</a>
+                    <hr class="border-amber-100 my-2">
+                    <button onclick="toggleSidebar(); selectDicasTab('livro')" class="text-left hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-book-open text-brand-darkyellow w-6"></i>Livros em Português</button>
+                    <button onclick="toggleSidebar(); selectDicasTab('filme')" class="text-left hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-film text-brand-darkyellow w-6"></i>Filmes & Documentários</button>
+                    <button onclick="toggleSidebar(); selectDicasTab('video')" class="text-left hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-circle-play text-brand-darkyellow w-6"></i>Vídeos do YouTube</button>
+                    <button onclick="toggleSidebar(); selectDicasTab('pratica')" class="text-left hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-lightbulb text-brand-darkyellow w-6"></i>Dicas Práticas</button>
+                    <a href="#termometro" onclick="toggleSidebar()" class="hover:text-brand-darkyellow transition flex items-center gap-3"><i class="fa-solid fa-heart-pulse text-brand-darkyellow w-6"></i>Autoavaliação</a>
+                </nav>
+            </div>
+            <div class="border-t border-amber-100 pt-6">
+                <p class="text-xs text-gray-500 text-center">Curso de Ciência da Felicidade — UniCesumar © 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <section id="inicio" class="relative min-h-[95vh] flex items-center justify-center text-center text-white px-4 parallax-sunflower">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
+        
+        <div class="relative z-10 max-w-5xl mx-auto space-y-8 px-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 bg-brand-yellow text-brand-dark font-bold text-xs md:text-sm tracking-widest uppercase px-6 py-2.5 rounded-full shadow-lg">
+                <i class="fa-solid fa-star text-brand-accent animate-pulse"></i>
+                3ª Edição - Especial Temática 2026
+            </div>
+            
+            <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
+                Conexão Felicidade
+            </h1>
+            
+            <div class="w-32 md:w-44 h-2 bg-brand-yellow mx-auto rounded-full"></div>
+            
+            <p class="text-lg sm:text-2xl font-light uppercase tracking-widest max-w-3xl mx-auto border-y border-white/20 py-5">
+                Revista Eletrônica do Primeiro Curso de Ciência da Felicidade no Brasil
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm sm:text-base text-gray-200 pt-4">
+                <span class="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full"><i class="fa-solid fa-bookmark text-brand-yellow"></i> 3ª Edição</span>
+                <span class="hidden sm:inline text-white/40">|</span>
+                <span class="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full"><i class="fa-solid fa-calendar text-brand-yellow"></i> 2026</span>
+                <span class="hidden sm:inline text-white/40">|</span>
+                <span class="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full"><i class="fa-solid fa-school text-brand-yellow"></i> UniCesumar</span>
+            </div>
+
+            <div class="pt-8">
+                <a href="#introducao" class="inline-flex items-center justify-center w-14 h-14 rounded-full border-2 border-white/40 text-white hover:border-brand-yellow hover:text-brand-yellow transition duration-300 animate-bounce">
+                    <i class="fa-solid fa-chevron-down text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="introducao" class="py-24 bg-brand-yellow text-brand-dark px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-yellow-200/40 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        <div class="absolute bottom-0 left-0 w-80 h-80 bg-amber-400/30 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10 space-y-8">
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight uppercase border-b-2 border-brand-dark/20 pb-4 inline-block">
+
+            </h2>
+            
+            <div class="space-y-6 text-lg sm:text-xl leading-relaxed font-light text-justify sm:text-center">
+                <p>
+                    Nesta <strong>3ª Edição da Revista Conexão Felicidade</strong>, reunimos todos os 5 eixos temáticos em <strong>um único artigo magistral e abrangente</strong>.
+                </p>
+                <p class="font-semibold text-brand-accent">
+                    Integramos <em>Cultura, Consumo e Sociedade Contemporânea</em>, <em>Felicidade no Trabalho</em>, <em>Práticas de Equilíbrio e Restauração</em>, <em>Inteligência Emocional e Relacional</em> e <em>Relaxamento e Meditação</em> sob uma mesma perspectiva transdisciplinar e fundamentada cientificamente.
+                </p>
+            </div>
+            
+            <div class="pt-6 flex justify-center gap-3">
+                <span class="w-3.5 h-3.5 rounded-full bg-brand-accent"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-brand-accent opacity-60"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-brand-accent opacity-30"></span>
+            </div>
+        </div>
+    </section>
+
+    <section id="artigos" class="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div class="text-center space-y-4 mb-16">
+            <span class="text-sm font-bold tracking-widest text-brand-darkyellow uppercase block">
+            <h2 class="font-serif text-4xl sm:text-5xl font-bold text-brand-dark"</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Uma síntese holística conectando os 5 temas centrais em uma só jornada de leitura.</p>
+        </div>
+
+        <!-- Single Article Card -->
+        <div class="bg-brand-cardBg rounded-3xl overflow-hidden shadow-xl border border-yellow-100 flex flex-col justify-between group">
+            <div class="relative h-80 sm:h-96 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&q=80&w=1400" alt="Girassóis - Artigo Unificado" class="w-full h-full object-cover transition-transform duration-750 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-xs sm:text-sm tracking-wider uppercase font-extrabold text-white bg-brand-darkyellow px-5 py-2.5 rounded-full shadow-lg">
+    
+                </span>
+            </div>
+            <div class="p-8 sm:p-12 space-y-6">
+                <div class="space-y-3">
+                    <div class="flex flex-wrap gap-2 text-xs font-bold text-brand-darkyellow uppercase tracking-wider">
+                        <span class="bg-amber-100 px-3 py-1 rounded-full">Cultura & Consumo</span>
+                        <span class="bg-amber-100 px-3 py-1 rounded-full">Felicidade no Trabalho</span>
+                        <span class="bg-amber-100 px-3 py-1 rounded-full">Práticas de Equilíbrio</span>
+                        <span class="bg-amber-100 px-3 py-1 rounded-full">Inteligência Emocional</span>
+                        <span class="bg-amber-100 px-3 py-1 rounded-full">Meditação</span>
+                    </div>
+                    <h3 class="font-serif text-3xl sm:text-4xl font-bold text-brand-dark leading-tight group-hover:text-amber-900 transition-colors">
+                        A Arte de Viver e Trabalhar na Era Contemporânea: A Ciência do Bem-Estar, Restauração Somática e Conexões Humanas
+                    </h3>
+                    <p class="text-xs sm:text-sm font-semibold text-brand-accent/90">3ª Edição — UniCesumar 2026 | Referências: Byung-Chul Han, Daniel Goleman, Jon Kabat-Zinn, Mihaly Csikszentmihalyi, Robert Waldinger.</p>
+                    <p class="text-gray-600 leading-relaxed text-base sm:text-lg text-justify pt-2">
+                        Um estudo acadêmico integrado que aborda a aceleração da sociedade do cansaço, os desafios do hiperconsumismo, a reestruturação do ambiente de trabalho com base no propósito e na segurança psicológica, e a aplicação prática da neurobiologia do relaxamento, inteligência relacional e meditação consciente para a construção de uma vida plena.
+                    </p>
+                </div>
+                <div class="pt-6">
+                    <button onclick="openArticle('art_unificado')" class="w-full text-center inline-flex items-center justify-center gap-3 bg-brand-dark text-white hover:bg-brand-darkyellow hover:text-brand-dark transition-all duration-300 px-8 py-5 rounded-2xl font-bold shadow-lg text-lg">
+                        Ler Artigo Unificado Completo <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dicas" class="py-24 bg-amber-50/50 px-4 sm:px-6 lg:px-8 border-y border-yellow-100">
+        <div class="max-w-7xl mx-auto space-y-20">
+            <div class="text-center space-y-4">
+                <span class="text-xs font-bold tracking-widest text-brand-darkyellow uppercase px-4 py-1.5 bg-white border border-brand-yellow rounded-full">Recomendações e Multimídia</span>
+                <h2 class="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-brand-dark">
+                    Curadoria de Recursos & Mídia
+                </h2>
+                <p class="text-gray-600 max-w-xl mx-auto">
+                    Livros recomendados em língua portuguesa, seleção de vídeos do YouTube e práticas diárias associadas ao artigo unificado da 3ª Edição.
+                </p>
+            </div>
+
+            <!-- CATEGORY 1: LIVROS EM PORTUGUÊS -->
+            <div id="dicas-livro" class="space-y-6 scroll-mt-24">
+                <div class="flex items-center gap-3 border-b border-amber-200 pb-3">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-lg"><i class="fa-solid fa-book"></i></span>
+                    <h3 class="font-serif text-2xl font-bold text-brand-dark">Livros em Língua Portuguesa</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-book"></i> Livro</span>
+                                <div class="flex gap-0.5 text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold group-hover:text-brand-darkyellow transition">Felicidade Autêntica</h3>
+                            <p class="text-xs text-gray-500 italic">Por Martin E. P. Seligman (Ed. Objetiva)</p>
+                            <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                O pai da psicologia positiva explica em português como identificar forças de caráter e construir uma vida com significado e equilíbrio duradouro.
+                            </p>
+                        </div>
+                        <div class="bg-amber-100/50 px-6 py-4 border-t border-yellow-50 text-xs text-brand-accent font-semibold">
+                            <i class="fa-solid fa-lightbulb"></i> Tema: Psicologia Positiva & Restauração
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-book"></i> Livro</span>
+                                <div class="flex gap-0.5 text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold group-hover:text-brand-darkyellow transition">Inteligência Emocional</h3>
+                            <p class="text-xs text-gray-500 italic">Por Daniel Goleman (Ed. Intrínseca)</p>
+                            <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                Obra consagrada sobre empatia, autoconsciência e o peso decisivo das relações humanas para o sucesso pessoal e coletivo.
+                            </p>
+                        </div>
+                        <div class="bg-amber-100/50 px-6 py-4 border-t border-yellow-50 text-xs text-brand-accent font-semibold">
+                            <i class="fa-solid fa-lightbulb"></i> Tema: Inteligência Emocional
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-book"></i> Livro</span>
+                                <div class="flex gap-0.5 text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold group-hover:text-brand-darkyellow transition">A Sociedade do Cansaço</h3>
+                            <p class="text-xs text-gray-500 italic">Por Byung-Chul Han (Ed. Vozes)</p>
+                            <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                Análise sociológica profunda sobre como o indivíduo contemporâneo se explora voluntariamente no trabalho e na cultura do desempenho.
+                            </p>
+                        </div>
+                        <div class="bg-amber-100/50 px-6 py-4 border-t border-yellow-50 text-xs text-brand-accent font-semibold">
+                            <i class="fa-solid fa-lightbulb"></i> Tema: Cultura, Consumo e Sociedade
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORY 2: FILMES -->
+            <div id="dicas-filme" class="space-y-6 scroll-mt-24">
+                <div class="flex items-center gap-3 border-b border-amber-200 pb-3">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-lg"><i class="fa-solid fa-film"></i></span>
+                    <h3 class="font-serif text-2xl font-bold text-brand-dark">Filmes & Documentários</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-film"></i> Documentário</span>
+                                <div class="flex gap-0.5 text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold group-hover:text-brand-darkyellow transition">Minimalismo: Um Documentário sobre as Coisas Importantes</h3>
+                            <p class="text-xs text-gray-500 italic">Dirigido por Matt D'Avella</p>
+                            <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                Explora o impacto do hiperconsumismo na sociedade contemporânea e como pessoas encontraram liberdade emocional ao focar em experiências e conexões.
+                            </p>
+                        </div>
+                        <div class="bg-amber-100/50 px-6 py-4 border-t border-yellow-50 text-xs text-brand-accent font-semibold">
+                            <i class="fa-solid fa-lightbulb"></i> Foco: Cultura e Consumo
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-film"></i> Filme</span>
+                                <div class="flex gap-0.5 text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold group-hover:text-brand-darkyellow transition">Questão de Tempo (About Time)</h3>
+                            <p class="text-xs text-gray-500 italic">Dirigido por Richard Curtis</p>
+                            <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                Reflexão poética e profunda sobre o valor da atenção plena no cotidiano, mostrando que a felicidade reside em saborear os dias comuns.
+                            </p>
+                        </div>
+                        <div class="bg-amber-100/50 px-6 py-4 border-t border-yellow-50 text-xs text-brand-accent font-semibold">
+                            <i class="fa-solid fa-lightbulb"></i> Foco: Meditação e Presença
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORY 3: VÍDEOS DO YOUTUBE -->
+            <div id="dicas-video" class="space-y-6 scroll-mt-24">
+                <div class="flex items-center gap-3 border-b border-amber-200 pb-3">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-lg"><i class="fa-solid fa-circle-play"></i></span>
+                    <h3 class="font-serif text-2xl font-bold text-brand-dark">Vídeos do YouTube Indicados</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Video 1 -->
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div>
+                            <div class="relative h-48 bg-stone-900 overflow-hidden flex items-center justify-center">
+                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600" alt="Inteligência Emocional" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black/35 flex items-center justify-center">
+                                    <button onclick="openVideo('bKMBinGtoRE')" class="w-14 h-14 rounded-full bg-brand-yellow hover:bg-brand-darkyellow text-brand-dark flex items-center justify-center text-xl transition shadow-lg transform group-hover:scale-110" aria-label="Reproduzir vídeo">
+                                        <i class="fa-brands fa-youtube text-red-600 text-2xl"></i>
+                                    </button>
+                                </div>
+                                <span class="absolute bottom-3 right-3 bg-brand-dark text-white text-xs px-2.5 py-1 rounded-md font-semibold">YouTube</span>
+                            </div>
+                            <div class="p-6 space-y-3">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-brain"></i> Inteligência Emocional</span>
+                                <h3 class="font-serif text-lg font-bold group-hover:text-brand-darkyellow transition">A Ciência da Inteligência Emocional e Relacional</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                    Discussão aprofundada sobre como gerenciar reações e cultivar empatia nas relações interpessoais modernas.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="openVideo('bKMBinGtoRE')" class="w-full text-center bg-brand-dark hover:bg-brand-darkyellow text-white hover:text-brand-dark transition-all duration-300 py-3 rounded-2xl font-semibold flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-youtube"></i> Assistir no YouTube
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Video 2 -->
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div>
+                            <div class="relative h-48 bg-stone-900 overflow-hidden flex items-center justify-center">
+                                <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=600" alt="Meditação e Relaxamento" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black/35 flex items-center justify-center">
+                                    <button onclick="openVideo('zvPyZV4Jcmo')" class="w-14 h-14 rounded-full bg-brand-yellow hover:bg-brand-darkyellow text-brand-dark flex items-center justify-center text-xl transition shadow-lg transform group-hover:scale-110" aria-label="Reproduzir vídeo">
+                                        <i class="fa-brands fa-youtube text-red-600 text-2xl"></i>
+                                    </button>
+                                </div>
+                                <span class="absolute bottom-3 right-3 bg-red-600 text-white text-xs px-2.5 py-1 rounded-md font-semibold">YouTube</span>
+                            </div>
+                            <div class="p-6 space-y-3">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-spa"></i> Meditação</span>
+                                <h3 class="font-serif text-lg font-bold group-hover:text-brand-darkyellow transition">Neurociência do Relaxamento e Meditação</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                    Como a prática meditativa altera a estrutura cerebral e reduz os níveis de cortisol de forma comprovada.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="openVideo('zvPyZV4Jcmo')" class="w-full text-center bg-brand-dark hover:bg-brand-darkyellow text-white hover:text-brand-dark transition-all duration-300 py-3 rounded-2xl font-semibold flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-youtube"></i> Assistir no YouTube
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Video 3: Cultura, Consumo e Sociedade Contemporânea -->
+                    <div class="bg-white rounded-3xl border border-yellow-100 shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300">
+                        <div>
+                            <div class="relative h-48 bg-stone-900 overflow-hidden flex items-center justify-center">
+                                <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=600" alt="Cultura, Consumo e Sociedade" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black/35 flex items-center justify-center">
+                                    <button onclick="openVideo('aiyBtkUwkPI')" class="w-14 h-14 rounded-full bg-brand-yellow hover:bg-brand-darkyellow text-brand-dark flex items-center justify-center text-xl transition shadow-lg transform group-hover:scale-110" aria-label="Reproduzir vídeo">
+                                        <i class="fa-brands fa-youtube text-red-600 text-2xl"></i>
+                                    </button>
+                                </div>
+                                <span class="absolute bottom-3 right-3 bg-red-600 text-white text-xs px-2.5 py-1 rounded-md font-semibold">YouTube</span>
+                            </div>
+                            <div class="p-6 space-y-3">
+                                <span class="text-xs font-bold tracking-wider text-brand-darkyellow uppercase bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-bag-shopping"></i> Cultura & Consumo</span>
+                                <h3 class="font-serif text-lg font-bold group-hover:text-brand-darkyellow transition">A Ciência da Felicidade e a Sociedade Contemporânea</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed text-justify">
+                                    Uma reflexão sobre como o consumo acelerado e as pressões culturais impactam o bem-estar e a busca pela felicidade autêntica.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="openVideo('aiyBtkUwkPI')" class="w-full text-center bg-brand-dark hover:bg-brand-darkyellow text-white hover:text-brand-dark transition-all duration-300 py-3 rounded-2xl font-semibold flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-youtube"></i> Assistir no YouTube
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORY 4: PRÁTICAS -->
+            <div id="dicas-pratica" class="space-y-6 scroll-mt-24">
+                <div class="flex items-center gap-3 border-b border-amber-200 pb-3">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-lg"><i class="fa-solid fa-lightbulb"></i></span>
+                    <h3 class="font-serif text-2xl font-bold text-brand-dark">Práticas Diárias de Bem-Estar</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-brand-cardBg border border-yellow-100 p-8 rounded-3xl shadow-sm hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-xl font-bold">1</div>
+                            <h3 class="font-serif text-xl font-bold">Detox Digital</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Reserve 45 minutos diários sem telas para reduzir o impacto da sociedade hiperconectada.
+                            </p>
+                        </div>
+                        <span class="text-xs text-brand-darkyellow font-bold uppercase mt-6 tracking-widest">Cultura & Consumo</span>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-yellow-100 p-8 rounded-3xl shadow-sm hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-xl font-bold">2</div>
+                            <h3 class="font-serif text-xl font-bold">Respiração Consciente</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Pratique respiração diafragmática por 5 minutos para restaurar o sistema nervoso autônomo.
+                            </p>
+                        </div>
+                        <span class="text-xs text-brand-darkyellow font-bold uppercase mt-6 tracking-widest">Restauração</span>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-yellow-100 p-8 rounded-3xl shadow-sm hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-xl font-bold">3</div>
+                            <h3 class="font-serif text-xl font-bold">Escuta Ativa</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Conecte-se com colegas ou familiares sem interromper, exercitando a inteligência relacional.
+                            </p>
+                        </div>
+                        <span class="text-xs text-brand-darkyellow font-bold uppercase mt-6 tracking-widest">Relacionamento</span>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-yellow-100 p-8 rounded-3xl shadow-sm hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-brand-darkyellow flex items-center justify-center text-xl font-bold">4</div>
+                            <h3 class="font-serif text-xl font-bold">Micro-pausa no Trabalho</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                A cada 90 minutos de expediente, faça uma pausa de 3 minutos para reenergizar o foco cognitivo.
+                            </p>
+                        </div>
+                        <span class="text-xs text-brand-darkyellow font-bold uppercase mt-6 tracking-widest">Trabalho</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="termometro" class="py-24 px-4 sm:px-6 lg:px-8 bg-stone-100">
+        <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl p-8 sm:p-12 border border-yellow-100 space-y-8 text-center">
+            <div class="w-16 h-16 bg-brand-yellow text-brand-accent rounded-2xl flex items-center justify-center text-2xl mx-auto shadow-md">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="font-serif text-3xl font-bold text-brand-dark">Termômetro de Bem-Estar 2026</h2>
+                <p class="text-gray-600 text-sm sm:text-base">
+                    Avalie rapidamente seus níveis de equilíbrio, inteligência emocional e satisfação profissional para receber uma orientação personalizada.
+                </p>
+            </div>
+
+            <div class="text-left space-y-6" id="quizContainer">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">1. Com que frequência você consegue reservar momentos de pausa e desconexão digital no seu dia?</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="selectQuizAnswer(1, 1, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Raramente</button>
+                        <button onclick="selectQuizAnswer(1, 2, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Às vezes</button>
+                        <button onclick="selectQuizAnswer(1, 3, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Frequentemente</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">2. Como você avalia sua capacidade de lidar com conflitos e manter a empatia nas relações?</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="selectQuizAnswer(2, 1, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Desafiador</button>
+                        <button onclick="selectQuizAnswer(2, 2, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Moderado</button>
+                        <button onclick="selectQuizAnswer(2, 3, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Excelente</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">3. Sente que suas atividades profissionais trazem realização e alinhamento com seus valores?</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="selectQuizAnswer(3, 1, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Pouco</button>
+                        <button onclick="selectQuizAnswer(3, 2, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Razoavelmente</button>
+                        <button onclick="selectQuizAnswer(3, 3, this)" class="quiz-btn border border-amber-200 hover:bg-amber-50 rounded-xl py-3 px-4 text-sm font-medium transition text-center">Plenamente</button>
+                    </div>
+                </div>
+
+                <button onclick="calculateQuizResults()" class="w-full bg-brand-dark text-white hover:bg-brand-darkyellow hover:text-brand-dark font-semibold py-4 rounded-2xl transition-all duration-300 shadow-lg text-center">
+                    Calcular Resultado de Bem-Estar
+                </button>
+            </div>
+
+            <div id="quizResult" class="hidden p-6 rounded-2xl text-left transition-all duration-300 space-y-4"></div>
+        </div>
+    </section>
+
+    <div id="articleModal" class="fixed inset-0 bg-black/60 z-50 pointer-events-none opacity-0 transition-all duration-300 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="modalContent" class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transition-transform duration-300 translate-y-8 flex flex-col">
+            <div id="modalHeader" class="bg-brand-yellow p-6 relative flex flex-col items-center text-center">
+                <button onclick="closeArticle()" class="absolute top-4 right-4 bg-white/80 hover:bg-white text-brand-dark p-2 rounded-full transition shadow" aria-label="Fechar artigo">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+                <span id="modalCategory" class="text-xs font-bold tracking-widest text-brand-accent uppercase">SÍNTESE DOS 5 TEMAS</span>
+                <h3 id="modalTitle" class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark mt-2 px-8">Título do Artigo</h3>
+                <p id="modalMeta" class="text-xs text-brand-accent mt-3">Autor | Data</p>
+            </div>
+            
+            <div class="h-64 sm:h-80 w-full relative">
+                <img id="modalImg" src="" alt="Imagem do artigo" class="w-full h-full object-cover">
+            </div>
+
+            <div id="modalBody" class="p-8 sm:p-12 space-y-6 text-gray-700 leading-relaxed text-base sm:text-lg text-justify"></div>
+        </div>
+    </div>
+
+    <footer class="bg-brand-dark text-white py-16 px-4 sm:px-6 lg:px-8 border-t-4 border-brand-yellow">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div class="space-y-4">
+                <span class="font-serif text-2xl font-bold tracking-wider text-brand-yellow flex items-center gap-2">
+                    <i class="fa-solid fa-sun"></i>
+                    Conexão Felicidade
+                </span>
+                <p class="text-sm text-gray-400 max-w-sm">
+                    3ª Edição da Revista Eletrônica de Ciência da Felicidade da UniCesumar.
+                </p>
+            </div>
+            
+            <div class="space-y-4">
+                <h4 class="font-serif text-lg font-bold text-brand-yellow">Mapa da 3ª Edição</h4>
+                <div class="grid grid-cols-2 gap-2 text-sm text-gray-400">
+                    <a href="#inicio" class="hover:text-white transition">Início</a>
+                    <a href="#introducao" class="hover:text-white transition">Apresentação</a>
+                    <a href="#artigos" class="hover:text-white transition">Artigo Unificado</a>
+                    <button onclick="selectDicasTab('livro')" class="text-left hover:text-white transition">Livros PT</button>
+                    <button onclick="selectDicasTab('video')" class="text-left hover:text-white transition">Vídeos YouTube</button>
+                    <a href="#termometro" class="hover:text-white transition">Autoavaliação</a>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-serif text-lg font-bold text-brand-yellow">UniCesumar 2026</h4>
+                <p class="text-sm text-gray-400">
+                    Conheça o pioneiro curso superior de Ciência da Felicidade no Brasil.
+                </p>
+                <div class="flex gap-4 pt-2">
+                    <a href="https://www.instagram.com/cienciadafelicidade.ead/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/10 hover:bg-brand-yellow hover:text-brand-dark flex items-center justify-center transition text-lg" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@cienciadafelicidadeunicesu2931" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/10 hover:bg-brand-yellow hover:text-brand-dark flex items-center justify-center transition text-lg" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto border-t border-white/10 pt-8 text-center text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 UniCesumar. Todos os direitos reservados. 3ª Edição Conexão Felicidade.</p>
+            <p>Veículo Oficial de Extensão Acadêmica.</p>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const bar = document.getElementById('readProgress');
+            if (bar) bar.style.width = scrolled + '%';
+        });
+
+        function showNotification(title, message, type = 'info') {
+            const notification = document.getElementById('customNotification');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const iconEl = document.getElementById('notificationIcon');
+
+            titleEl.innerText = title;
+            messageEl.innerText = message;
+
+            if (type === 'success') {
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-check text-green-400"></i>';
+            } else if (type === 'error') {
+                iconEl.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
+            } else {
+                iconEl.innerHTML = '<i class="fa-solid fa-sun text-brand-yellow animate-spin-slow"></i>';
+            }
+
+            notification.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+            notification.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(hideNotification, 5500);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById('customNotification');
+            notification.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+            notification.classList.remove('translate-y-0', 'opacity-100');
+        }
+
+        function toggleSearch() {
+            const search = document.getElementById('searchBar');
+            search.classList.toggle('hidden');
+            if (!search.classList.contains('hidden')) {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (!query) return;
+
+            let articleFound = false;
+            for (let id in articlesData) {
+                const art = articlesData[id];
+                if (art.title.toLowerCase().includes(query) || art.category.toLowerCase().includes(query) || art.body.toLowerCase().includes(query)) {
+                    openArticle(id);
+                    articleFound = true;
+                    toggleSearch();
+                    break;
+                }
+            }
+
+            if (!articleFound) {
+                showNotification('Busca Realizada', 'Termo não encontrado diretamente. Tente navegar pelas seções da página.', 'info');
+                toggleSearch();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const content = document.getElementById('mobileSidebarContent');
+            if(sidebar.classList.contains('pointer-events-none')) {
+                sidebar.classList.remove('pointer-events-none', 'opacity-0');
+                sidebar.classList.add('opacity-100');
+                content.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('pointer-events-none', 'opacity-0');
+                sidebar.classList.remove('opacity-100');
+                content.classList.add('-translate-x-full');
+            }
+        }
+
+        function toggleMaisDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('maisMenu');
+            const chevron = document.getElementById('maisChevron');
+            const isOpen = menu.classList.contains('opacity-100');
+            
+            if (isOpen) {
+                menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                chevron.classList.remove('rotate-180');
+            } else {
+                menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+                chevron.classList.add('rotate-180');
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('maisMenu');
+            const dropdown = document.getElementById('maisDropdown');
+            if (menu && dropdown && !dropdown.contains(e.target)) {
+                menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                const chevron = document.getElementById('maisChevron');
+                if (chevron) chevron.classList.remove('rotate-180');
+            }
+        });
+
+        const articlesData = {
+            art_unificado: {
+                category: "INTEGRAÇÃO DOS 5 TEMAS | 3ª EDIÇÃO 2026",
+                title: "A Arte de Viver e Trabalhar na Era Contemporânea: A Ciência do Bem-Estar, Restauração Somática e Conexões Humanas",
+                meta: "3ª Edição Especial — UniCesumar 2026 | Referências: HAN, Byung-Chul; GOLEMAN, Daniel; KABAT-ZINN, Jon; CSIKSZENTMIHALYI, Mihaly; WALDINGER, Robert; EDMONDSON, Amy.",
+                img: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&q=80&w=1200",
+                body: `
+                    <div class="border-l-4 border-brand-darkyellow pl-4 italic text-brand-accent font-semibold my-4">
+                        Este artigo unificado engloba as cinco temáticas da 3ª Edição: Cultura, Consumo e Sociedade Contemporânea / Felicidade no Trabalho / Práticas de Equilíbrio e Restauração / Inteligência Emocional e Relacional / Relaxamento e Meditação.
+                    </div>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-2">1. Cultura, Consumo e o Sujeito na Sociedade Contemporânea</h4>
+                    <p>
+                        A sociedade contemporânea é caracterizada por uma aceleração sem precedentes e pela centralidade do consumo enquanto gerador de identidade. Conforme aponta o filósofo Byung-Chul Han em <em>A Sociedade do Cansaço</em>, a transição da sociedade disciplinar para a sociedade do desempenho transformou o indivíduo em um "impresário de si mesmo". Sob a bandeira da liberdade e da autorealização, instala-se uma rotina de autoexploração voluntária, culminando em esgotamento psíquico, ansiedade crônica e síndrome de Burnout.
+                    </p>
+                    <p>
+                        Somado a isso, o hiperconsumismo promove a ilusão de que a aquisição contínua de bens materiais proporcionará felicidade duradoura. Todavia, os estudos em psicologia positiva demonstram o fenômeno da <em>adaptação hedônica</em>: o impulso emocional positivo gerado por novas aquisições dissipa-se rapidamente, retornando o indivíduo ao seu nível basal de satisfação e impulsionando-o a um ciclo ininterrupto de consumo efêmero.
+                    </p>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-4">2. Felicidade no Trabalho: Segurança Psicológica, Propósito e Fluxo</h4>
+                    <p>
+                        Dado que a vida adulta se desdobra em grande parte no contexto corporativo, a busca pela felicidade não pode ser desvinculada do ambiente profissional. Ambientes de trabalho pautados unicamente pelo controle rígido e pelo medo reprimem a inovação e o bem-estar. Em contrapartida, as pesquisas de Amy Edmondson sobre <strong>Segurança Psicológica</strong> revelam que equipes onde os membros se sentem confortáveis para assumir riscos interpessoais apresentam índices superiores de engajamento, retenção de talentos e satisfação.
+                    </p>
+                    <p>
+                        Ademais, quando as tarefas profissionais alinham-se às forças de caráter individuais e oferecem o nível adequado de desafio em relação às habilidades do trabalhador, cria-se o cenário ideal para o <strong>Estado de Fluxo (Flow)</strong>, teorizado por Mihaly Csikszentmihalyi. No estado de fluxo, o indivíduo vivencia uma absorção profunda e gratificante no presente, onde o trabalho deixa de ser fardo e passa a ser fonte autêntica de significado e realização.
+                    </p>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-4">3. Práticas de Equilíbrio e Restauração Somática</h4>
+                    <p>
+                        Para contrabalançar os desgastes impostos pela produtividade tóxica e pelo excesso de estímulos digitais, a ciência da felicidade prescreve intervenções deliberadas de restauração. O equilíbrio orgânico não é uma meta estática, mas um ritmo dinâmico entre o gasto de energia do sistema nervoso simpático e o restabelecimento promovido pelo sistema parasimpático.
+                    </p>
+                    <p>
+                        Estratégias simples, como pausas sistemáticas ao longo do dia, higiene do sono, contato regular com ambientes naturais e o "detox digital", reduzem significativamente os níveis do hormônio cortisol na corrente sanguínea, prevenindo a exaustão biológica e fortalecendo a resiliência imunológica.
+                    </p>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-4">4. Inteligência Emocional e Relacional: O Pilar das Conexões Humanas</h4>
+                    <p>
+                        Conforme demonstrado pelo Estudo de Desenvolvimento Adulto de Harvard — o mais longo estudo científico sobre o bem-estar humano, sintetizado por Robert Waldinger —, o fator número um para uma vida longa, saudável e feliz são os <strong>relacionamentos calorosos e significativos</strong>.
+                    </p>
+                    <p>
+                        A consolidação desses vínculos exige o desenvolvimento contínuo da <strong>Inteligência Emocional e Relacional</strong> (Goleman). A habilidade de reconhecer e nomear os próprios estados afetivos, praticar a autorregulação e exercer uma empatia compassiva favorece a resolução construtiva de conflitos, tanto nas dinâmicas familiares quanto nas equipes profissionais, constituindo um colchão protetor contra o isolamento social.
+                    </p>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-4">5. Relaxamento, Meditação e Neuroplasticidade</h4>
+                    <p>
+                        Por fim, a integração do relaxamento e da meditação (Atenção Plena / <em>Mindfulness</em>) atua como catalisador direto da saúde neurológica e do autoconhecimento. Investigações pioneiras conduzidas por Jon Kabat-Zinn e Richard Davidson comprovaram que treinos meditativos consistentes alteram estruturalmente o cérebro através da neuroplasticidade: há um aumento visível na densidade do córtex pré-frontal (região responsável pela tomada de decisões e regulação emocional) e uma diminuição no volume da amígdala cerebral (centro de reatividade ao medo e estresse).
+                    </p>
+                    <p>
+                        A prática da meditação oferece ao praticante um ponto de ancoragem no momento presente, libertando-o da ruminação sobre o passado e da ansiedade antecipatória em relação ao futuro.
+                    </p>
+
+                    <h4 class="font-serif text-2xl font-bold text-brand-dark pt-4">Conclusão: Uma Jornada Integrada</h4>
+                    <p>
+                        Em suma, atingir a felicidade autêntica no século XXI não pressupõe isolar-se da sociedade ou recusar o trabalho, mas sim ressignificar a relação com o consumo, humanizar os ambientes corporativos, zelar pela restauração somática, cultivar laços afetivos profundos e treinar a mente para o estado de presença consciente.
+                    </p>
+
+                    <div class="mt-8 p-6 bg-amber-50 rounded-2xl border border-amber-200">
+                        <h5 class="font-bold text-brand-dark mb-3 text-lg">Referências Bibliográficas Completas:</h5>
+                        <ul class="list-disc pl-5 text-sm space-y-2 text-gray-700">
+                            <li>CSIKSZENTMIHALYI, Mihaly. <em>A Psicologia da Felicidade</em>. São Paulo: HarperCollins, 2020.</li>
+                            <li>EDMONDSON, Amy. <em>A Organização sem Medo: Criando Segurança Psicológica no Local de Trabalho</em>. Rio de Janeiro: Alta Books, 2020.</li>
+                            <li>GOLEMAN, Daniel. <em>Inteligência Emocional</em>. Rio de Janeiro: Intrínseca, 2012.</li>
+                            <li>GOLEMAN, Daniel; DAVIDSON, Richard. <em>A Alquimia da Mente: A Ciência por Trás da Meditação</em>. Rio de Janeiro: Objetiva, 2018.</li>
+                            <li>HAN, Byung-Chul. <em>A Sociedade do Cansaço</em>. Petrópolis: Vozes, 2017.</li>
+                            <li>KABAT-ZINN, Jon. <em>Viver a Catástrofe Total: Como Utilizar a Sabedoria do Corpo e da Mente para Enfrentar o Estresse, a Dor e a Doença</em>. Lisboa: Palas Editores, 2004.</li>
+                            <li>SELIGMAN, Martin E. P. <em>Felicidade Autêntica</em>. Rio de Janeiro: Objetiva, 2019.</li>
+                            <li>WALDINGER, Robert; SCHULZ, Marc. <em>Uma Boa Vida: As Lições do Maior Estudo Científico sobre a Felicidade</em>. São Paulo: Sextante, 2023.</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        function selectDicasTab(tabId) {
+            const targetElement = document.getElementById('dicas-' + tabId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function openArticle(id) {
+            const article = articlesData[id];
+            if (!article) return;
+
+            document.getElementById('modalCategory').innerText = article.category;
+            document.getElementById('modalTitle').innerText = article.title;
+            document.getElementById('modalMeta').innerText = article.meta;
+            document.getElementById('modalImg').src = article.img;
+            document.getElementById('modalBody').innerHTML = article.body;
+
+            const modal = document.getElementById('articleModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('translate-y-8');
+        }
+
+        function closeArticle() {
+            const modal = document.getElementById('articleModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.classList.remove('opacity-100');
+            content.classList.add('translate-y-8');
+        }
+
+        document.getElementById('articleModal').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('articleModal')) {
+                closeArticle();
+            }
+        });
+
+        function openVideo(videoId) {
+            window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+        }
+
+        const quizAnswers = { 1: 0, 2: 0, 3: 0 };
+
+        function selectQuizAnswer(questionId, score, element) {
+            quizAnswers[questionId] = score;
+            const siblingButtons = element.parentNode.querySelectorAll('.quiz-btn');
+            siblingButtons.forEach(btn => {
+                btn.classList.remove('bg-brand-yellow', 'text-brand-dark', 'font-bold', 'border-brand-darkyellow');
+                btn.classList.add('border-amber-200');
+            });
+            element.classList.remove('border-amber-200');
+            element.classList.add('bg-brand-yellow', 'text-brand-dark', 'font-bold', 'border-brand-darkyellow');
+        }
+
+        function calculateQuizResults() {
+            if (!quizAnswers[1] || !quizAnswers[2] || !quizAnswers[3]) {
+                showNotification('Formulário Incompleto', 'Por favor, responda todas as perguntas para calcular seu resultado.', 'error');
+                return;
+            }
+
+            const totalScore = quizAnswers[1] + quizAnswers[2] + quizAnswers[3];
+            const resultBox = document.getElementById('quizResult');
+            resultBox.classList.remove('hidden');
+
+            let title = "";
+            let description = "";
+            let tip = "";
+            let bgClass = "";
+
+            if (totalScore <= 4) {
+                title = "Alerta de Sobrecarga e Desequilíbrio";
+                description = "Você está sentindo os impactos do ritmo da sociedade contemporânea. Suas reservas de energia e momentos de pausa necessitam de atenção imediata.";
+                tip = "<strong>Recomendação:</strong> Pratique o Detox Digital e priorize momentos diários de relaxamento e respiração consciente.";
+                bgClass = "bg-red-50 text-red-900 border border-red-200";
+            } else if (totalScore <= 7) {
+                title = "Equilíbrio em Desenvolvimento";
+                description = "Você busca o equilíbrio, mas as pressões externas e o consumo diário de estímulos geram oscilações no seu bem-estar.";
+                tip = "<strong>Recomendação:</strong> Reforce a escuta ativa nas suas relações e reserve blocos fixos de descompressão.";
+                bgClass = "bg-amber-50 text-amber-900 border border-amber-200";
+            } else {
+                title = "Excelente Alinhamento e Bem-Estar";
+                description = "Parabéns! Seus hábitos refletem forte inteligência emocional, ótimas práticas de restauração e alinhamento com seu propósito.";
+                tip = "<strong>Recomendação:</strong> Continue compartilhando seu conhecimento e acompanhando as edições da nossa revista.";
+                bgClass = "bg-green-50 text-green-950 border border-green-200";
+            }
+
+            resultBox.className = `p-6 rounded-2xl text-left transition-all duration-300 space-y-4 ${bgClass}`;
+            resultBox.innerHTML = `
+                <h4 class="font-bold text-xl flex items-center gap-2">
+                    <i class="fa-solid fa-square-poll-vertical"></i> ${title}
+                </h4>
+                <p class="text-sm leading-relaxed">${description}</p>
+                <p class="text-sm border-t border-black/10 pt-3">${tip}</p>
+            `;
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
